@@ -1,6 +1,14 @@
 console.log("...testing ok");
 
-var url = "./src/doc/chemistry.pdf";
+const delay = () => {
+    return new Promise((resolve, reject) => {
+        setTimeout(() => {
+            resolve();
+        }, 500);
+    })
+}
+
+
 
 // Loaded via <script> tag, create shortcut to access PDF.js exports.
 var pdfjsLib = window["pdfjs-dist/build/pdf"];
@@ -39,7 +47,7 @@ function renderPage(num) {
     // Wait for rendering to finish
     renderTask.promise.then(function() {
       let ctx4 = document.getElementById(`the-canvas-${num}`).getContext("2d");
-      console.log("....ctx4", ctx4);
+      console.log(`${num}....ctx4`, ctx4);
       ctx4.fillStyle = "white";
       ctx4.fillRect(0, 0, 2000, 130);
       pageRendering = false;
@@ -70,36 +78,46 @@ function queueRenderPage(num) {
 /**
  * Displays previous page.
  */
-function onPrevPage() {
-  if (pageNum <= 1) {
-    return;
-  }
-  pageNum--;
-  queueRenderPage(pageNum);
-}
-document.getElementById("prev").addEventListener("click", onPrevPage);
+// function onPrevPage() {
+//   if (pageNum <= 1) {
+//     return;
+//   }
+//   pageNum--;
+//   queueRenderPage(pageNum);
+// }
+// document.getElementById("prev").addEventListener("click", onPrevPage);
 
 /**
  * Displays next page.
  */
-function onNextPage() {
-  if (pageNum >= pdfDoc.numPages) {
-    return;
-  }
-  pageNum++;
-  queueRenderPage(pageNum);
-}
-document.getElementById("next").addEventListener("click", onNextPage);
+// function onNextPage() {
+//   if (pageNum >= pdfDoc.numPages) {
+//     return;
+//   }
+//   pageNum++;
+//   queueRenderPage(pageNum);
+// }
+// document.getElementById("next").addEventListener("click", onNextPage);
 
+
+var url = "./src/doc/chemistry.pdf";
 /**
  * Asynchronously downloads PDF.
  */
-pdfjsLib.getDocument(url).promise.then(function(pdfDoc_) {
+pdfjsLib.getDocument(url).promise.then(async function(pdfDoc_) {
   pdfDoc = pdfDoc_;
-  document.getElementById("page_count").textContent = pdfDoc.numPages;
+//   document.getElementById("page_count").textContent = pdfDoc.numPages;
 
   // Initial/first page rendering
-    renderPage(pageNum);
+    // renderPage(pageNum);
+
+    await queueRenderPage(1);
+    await delay();
+    await queueRenderPage(2);
+    await delay();
+    await queueRenderPage(3);
+    await delay();
+
 //   renderPage(1);
 //   renderPage(2);
 //   renderPage(3);

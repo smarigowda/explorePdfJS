@@ -9,19 +9,19 @@ var pdfjsLib = window["pdfjs-dist/build/pdf"];
 pdfjsLib.GlobalWorkerOptions.workerSrc =
   "//mozilla.github.io/pdf.js/build/pdf.worker.js";
 
-var pdfDoc = null,
-  pageNum = 1,
-  pageRendering = false,
-  pageNumPending = null,
-  scale = 2,
-  canvas = document.getElementById("the-canvas"),
-  ctx = canvas.getContext("2d");
+let pdfDoc = null;
+let pageNum = 1;
+let pageRendering = false;
+let pageNumPending = null;
+let scale = 2;
 
 /**
  * Get page info from document, resize canvas accordingly, and render page.
  * @param num Page number.
  */
 function renderPage(num) {
+  canvas = document.getElementById(`the-canvas-${num}`);
+  ctx = canvas.getContext("2d");
   pageRendering = true;
   // Using promise to fetch the page
   pdfDoc.getPage(num).then(function(page) {
@@ -38,8 +38,8 @@ function renderPage(num) {
 
     // Wait for rendering to finish
     renderTask.promise.then(function() {
-      let ctx4 = document.getElementById("the-canvas").getContext("2d");
-      console.log('....ctx4', ctx4);
+      let ctx4 = document.getElementById(`the-canvas-${num}`).getContext("2d");
+      console.log("....ctx4", ctx4);
       ctx4.fillStyle = "white";
       ctx4.fillRect(0, 0, 2000, 130);
       pageRendering = false;
@@ -99,5 +99,14 @@ pdfjsLib.getDocument(url).promise.then(function(pdfDoc_) {
   document.getElementById("page_count").textContent = pdfDoc.numPages;
 
   // Initial/first page rendering
-  renderPage(pageNum);
+    renderPage(pageNum);
+//   renderPage(1);
+//   renderPage(2);
+//   renderPage(3);
+//   renderPage(4);
+//   renderPage(5);
+//   renderPage(6);
+//   renderPage(7);
+//   renderPage(8);
+//   renderPage(9);
 });

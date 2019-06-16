@@ -1,4 +1,24 @@
 canvas {
-    /* display: block; */
-    /* margin: 0 auto; */
+  display: block;
+  margin: 0 auto;
+  border: solid 1px black;
+}
+
+.container {
+    display: block;
+    margin: 0 auto;
+    width: 30%;
+}
+
+#header_mask_height, #detail_mask_top {
+    font-size: 3rem;
+}
+label {
+    font-size: 2rem;
+}
+button {
+    font-size: 2rem;
+}
+input {
+    font-size: 1.2rem;
 }

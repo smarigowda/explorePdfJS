@@ -1,16 +1,19 @@
 console.log("...PDFConverter");
 
+const path2pdf = "./src/doc/chemistry.pdf";
 let pdfDoc = null;
 const scale = 1.5;
+const newPdf = new jsPDF(); // loaded by script tag
 
-const doc2 = new jsPDF(); // loaded by script tag
-
+// renderPage()
 function renderPage(num) {
   return new Promise((resolve, reject) => {
+    // addNewCanvasToHTMLPage()
     const element = document.createElement("canvas");
     element.setAttribute("id", `the-canvas-${num}`);
     document.body.appendChild(element);
 
+    // renderPageIntoCanvas()
     let canvas = document.getElementById(`the-canvas-${num}`);
     const ctx = canvas.getContext("2d");
     pdfDoc.getPage(num).then(function(page) {
@@ -22,21 +25,19 @@ function renderPage(num) {
         viewport: viewport
       };
       const renderTask = page.render(renderContext);
-
+      // mask()
       renderTask.promise.then(function() {
-        let ctx4 = document
-          .getElementById(`the-canvas-${num}`)
-          .getContext("2d");
-        // console.log(`${num}....ctx4`, ctx4);
-        ctx4.fillStyle = "white";
+        ctx.fillStyle = "white";
         // ctx4.fillStyle = "red";
-        ctx4.fillRect(0, 0, 2000, 130);
+        // maskHeaderInCanvas()
+        ctx.fillRect(0, 0, 2000, 130);
         if (num === 1) {
-          // mask the heading as well
-          ctx4.fillRect(0, 440, 2000, 2000);
+          // maskDetailInCanvas()
+          ctx.fillRect(0, 440, 2000, 2000);
         }
-        // now resolve the promise
-        doc2.addImage(
+        // Add the masked canvas as a new page into the pdf document
+        // addMaskedCanvasToNewPDF
+        newPdf.addImage(
           document.getElementById(`the-canvas-${num}`).toDataURL("image/png"),
           "PNG",
           0,
@@ -50,16 +51,16 @@ function renderPage(num) {
   });
 }
 
-const url = "./src/doc/chemistry.pdf";
 /**
  * Asynchronously downloads PDF.
  */
-pdfjsLib.getDocument(url).promise.then(async doc => {
+// run()
+pdfjsLib.getDocument(path2pdf).promise.then(async doc => {
   pdfDoc = doc;
   console.log("total number of pages = ", pdfDoc.numPages);
   for (let i = 1; i <= pdfDoc.numPages; i++) {
     await renderPage(i);
-    i !== pdfDoc.numPages ? doc2.addPage() : null;
+    i !== pdfDoc.numPages ? newPdf.addPage() : null;
   }
-  doc2.save("converted3.pdf");
+  newPdf.save("converted3.pdf");
 });

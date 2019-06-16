@@ -23,18 +23,19 @@ input {
     font-size: 1.2rem;
 }
 #save-button {
-    background-color: orangered;
     padding: 1rem;
-    color: white;
+    background-color: white;
+    color: red;
     border-radius: 3px;
 }
 #save-button:focus {
     outline: none;
 }
 #save-button:hover {
-    background-color: white;
-    color: red;
+    background-color: orangered;
+    color: white;
     cursor: pointer;
+    border: solid black 1px;
 }
 
 #render-again {

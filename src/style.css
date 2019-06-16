@@ -22,3 +22,32 @@ button {
 input {
     font-size: 1.2rem;
 }
+#save-button {
+    background-color: orangered;
+    padding: 1rem;
+    color: white;
+    border-radius: 3px;
+}
+#save-button:focus {
+    outline: none;
+}
+#save-button:hover {
+    background-color: white;
+    color: red;
+    cursor: pointer;
+}
+
+#render-again {
+    background-color: orangered;
+    padding: 1rem;
+    color: white;
+    border-radius: 3px;
+}
+#render-again:focus {
+    outline: none;
+}
+#render-again:hover {
+    background-color: white;
+    color: red;
+    cursor: pointer;
+}

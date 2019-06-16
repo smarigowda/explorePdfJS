@@ -1,23 +1,18 @@
-console.log("...testing ok");
-
-// Loaded via <script> tag, create shortcut to access PDF.js exports.
-let pdfjs = window["pdfjs-dist/build/pdf"];
-
-// The workerSrc property shall be specified.
-// pdfjs.GlobalWorkerOptions.workerSrc =
-//   "//mozilla.github.io/pdf.js/build/pdf.worker.js";
+console.log("...PDFConverter");
 
 let pdfDoc = null;
-let scale = 1;
+const scale = 1.5;
+
+const doc2 = new jsPDF(); // loaded by script tag
 
 function renderPage(num) {
   return new Promise((resolve, reject) => {
-    let element = document.createElement("canvas");
+    const element = document.createElement("canvas");
     element.setAttribute("id", `the-canvas-${num}`);
     document.body.appendChild(element);
 
     let canvas = document.getElementById(`the-canvas-${num}`);
-    let ctx = canvas.getContext("2d");
+    const ctx = canvas.getContext("2d");
     pdfDoc.getPage(num).then(function(page) {
       const viewport = page.getViewport({ scale: scale });
       canvas.height = viewport.height;
@@ -26,7 +21,7 @@ function renderPage(num) {
         canvasContext: ctx,
         viewport: viewport
       };
-      var renderTask = page.render(renderContext);
+      const renderTask = page.render(renderContext);
 
       renderTask.promise.then(function() {
         let ctx4 = document
@@ -34,22 +29,37 @@ function renderPage(num) {
           .getContext("2d");
         // console.log(`${num}....ctx4`, ctx4);
         ctx4.fillStyle = "white";
+        // ctx4.fillStyle = "red";
         ctx4.fillRect(0, 0, 2000, 130);
+        if (num === 1) {
+          // mask the heading as well
+          ctx4.fillRect(0, 440, 2000, 2000);
+        }
         // now resolve the promise
+        doc2.addImage(
+          document.getElementById(`the-canvas-${num}`).toDataURL("image/png"),
+          "PNG",
+          0,
+          0,
+          211,
+          298
+        );
         resolve();
       });
     });
   });
 }
 
-let url = "./src/doc/chemistry.pdf";
+const url = "./src/doc/chemistry.pdf";
 /**
  * Asynchronously downloads PDF.
  */
-pdfjsLib.getDocument(url).promise.then(async function(doc) {
+pdfjsLib.getDocument(url).promise.then(async doc => {
   pdfDoc = doc;
   console.log("total number of pages = ", pdfDoc.numPages);
-  for (let i = 1; i <= 9; i++) {
+  for (let i = 1; i <= pdfDoc.numPages; i++) {
     await renderPage(i);
+    i !== pdfDoc.numPages ? doc2.addPage() : null;
   }
+  doc2.save("converted3.pdf");
 });

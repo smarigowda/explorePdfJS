@@ -5,8 +5,8 @@ let detailMaskTop = null;
 let headerMaskHeight = null;
 const saveNewPDF = false;
 let pdfDoc = null;
-const scale = 1.5;
-const newPdf = new jsPDF(); // loaded by script tag
+const scale = 1;
+const newPdf = new jsPDF('p', 'pt','a4',true); // loaded by script tag
 
 // renderPage()
 function renderPage(num) {
@@ -46,8 +46,10 @@ function renderPage(num) {
           "PNG",
           0,
           0,
-          211,
-          298
+          viewport.width,
+          viewport.height,
+          '',
+          'FAST'
         );
         resolve();
       });

@@ -9,16 +9,18 @@ let pdfDoc = null;
 const scale = 1;
 const newPdf = new jsPDF("p", "pt", "a4", true); // loaded by script tag
 
+function addNewCanvas(num) {
+  const element = document.createElement("canvas");
+  element.setAttribute("id", `the-canvas-${num}`);
+  element.setAttribute("class", `the-canvas`);
+  document.body.appendChild(element); 
+}
+
 // renderPage()
 function renderPage(num) {
   return new Promise((resolve, reject) => {
-    // if this is the first time rendering the pages then
-    // addNewCanvasToHTMLPage()
     if(firstTimeRender) {
-      const element = document.createElement("canvas");
-      element.setAttribute("id", `the-canvas-${num}`);
-      element.setAttribute("class", `the-canvas`);
-      document.body.appendChild(element);  
+      addNewCanvas(num);
     }
     // renderPageIntoCanvas()
     let canvas = document.getElementById(`the-canvas-${num}`);

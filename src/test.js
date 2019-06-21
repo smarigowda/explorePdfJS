@@ -1,5 +1,6 @@
 console.log("...PDFConverter");
 
+let firstTimeRender = true;
 let pdfFileName = null;
 let detailMaskTop = null;
 let headerMaskHeight = null;
@@ -11,12 +12,14 @@ const newPdf = new jsPDF("p", "pt", "a4", true); // loaded by script tag
 // renderPage()
 function renderPage(num) {
   return new Promise((resolve, reject) => {
+    // if this is the first time rendering the pages then
     // addNewCanvasToHTMLPage()
-    const element = document.createElement("canvas");
-    element.setAttribute("id", `the-canvas-${num}`);
-    element.setAttribute("class", `the-canvas`);
-    document.body.appendChild(element);
-
+    if(firstTimeRender) {
+      const element = document.createElement("canvas");
+      element.setAttribute("id", `the-canvas-${num}`);
+      element.setAttribute("class", `the-canvas`);
+      document.body.appendChild(element);  
+    }
     // renderPageIntoCanvas()
     let canvas = document.getElementById(`the-canvas-${num}`);
     const ctx = canvas.getContext("2d");
@@ -75,10 +78,6 @@ const renderAgainButton = document.getElementById("render-again");
 renderAgainButton.addEventListener("click", handleRenderAgain, false);
 
 function handleRenderAgain() {
-  document.querySelectorAll(".the-canvas").forEach(d => {
-    console.log(d);
-    d.remove();
-  });
   document.getElementById("save-button").remove();
   renderPages();
 }
@@ -106,6 +105,7 @@ function renderPages() {
       await renderPage(i);
       i !== pdfDoc.numPages ? newPdf.addPage() : null;
     }
+    firstTimeRender = false;
     const button = document.createElement("button");
     button.setAttribute("id", `save-button`);
     button.innerHTML = "Save PDF Now";

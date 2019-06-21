@@ -6,7 +6,7 @@ let headerMaskHeight = null;
 const saveNewPDF = false;
 let pdfDoc = null;
 const scale = 1;
-const newPdf = new jsPDF('p', 'pt','a4',true); // loaded by script tag
+const newPdf = new jsPDF("p", "pt", "a4", true); // loaded by script tag
 
 // renderPage()
 function renderPage(num) {
@@ -57,7 +57,7 @@ function renderPage(num) {
   });
 }
 
-const inputElement = document.getElementById("input");
+const inputElement = document.getElementById("file");
 inputElement.addEventListener("change", handleFile, false);
 
 function handleFile() {
@@ -66,6 +66,8 @@ function handleFile() {
   console.log("file name = ", fileList[0].name);
   pdfFileName = fileList[0].name;
   renderPages();
+  // enable Render Again button
+  document.getElementById("render-again").style.display = "block";
 }
 console.log("inputElement...", inputElement);
 

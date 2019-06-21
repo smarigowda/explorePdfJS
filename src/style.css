@@ -43,6 +43,7 @@ input {
     padding: 1rem;
     color: white;
     border-radius: 3px;
+    display: none;
 }
 #render-again:focus {
     outline: none;
@@ -51,4 +52,34 @@ input {
     background-color: white;
     color: red;
     cursor: pointer;
+}
+
+.inputfile {
+	width: 0.1px;
+	height: 0.1px;
+	opacity: 0;
+	overflow: hidden;
+	position: absolute;
+	z-index: -1;
+}
+
+.inputfile + label {
+    font-size: 1.25em;
+    font-weight: 200;
+    color: white;
+    background-color: black;
+    display: inline-block;
+    padding: 1rem;
+    padding-left: 4rem;
+    padding-right: 4rem;
+    border-radius: 2rem;
+}
+
+.inputfile:focus + label,
+.inputfile + label:hover {
+    background-color: red;
+}
+
+.inputfile + label {
+	cursor: pointer; /* "hand" cursor */
 }

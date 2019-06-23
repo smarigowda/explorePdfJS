@@ -2,25 +2,55 @@ console.log("...PDFConverter");
 
 let firstTimeRender = true;
 let pdfFileName = null;
+let fullPathOfFileChosen = null;
 let detailMaskTop = null;
 let headerMaskHeight = null;
 const saveNewPDF = false;
 let pdfDoc = null;
 const scale = 1;
+let fileDataURL;
 const newPdf = new jsPDF("p", "pt", "a4", true); // loaded by script tag
 
-function addNewCanvas(num) {
+const inputElement = document.getElementById("file");
+inputElement.addEventListener("change", handleFile, false);
+console.log("inputElement...", inputElement);
+
+function handleFile() {
+  const fileList = this.files; /* now you can work with the file list */
+  console.log(fileList);
+  let fr = new FileReader();
+  function receivedPdf(e) {
+    console.log("file loaded...");
+    console.log(e);
+    console.log('file reader instance...');
+    console.log(fr);
+    fileDataURL = fr.result;
+    renderPages();
+  }
+  fr.onload = receivedPdf;
+  //fr.readAsText(file);
+  fr.readAsDataURL(fileList[0]);
+
+  console.log("file name = ", fileList[0].name);
+  pdfFileName = fileList[0].name;
+  fullPathOfFileChosen = this.value;
+  // renderPages();
+  // enable Render Again button
+  document.getElementById("render-again").style.display = "block";
+}
+
+function addANewCanvas(num) {
   const element = document.createElement("canvas");
   element.setAttribute("id", `the-canvas-${num}`);
   element.setAttribute("class", `the-canvas`);
-  document.body.appendChild(element); 
+  document.body.appendChild(element);
 }
 
 // renderPage()
 function renderPage(num) {
   return new Promise((resolve, reject) => {
-    if(firstTimeRender) {
-      addNewCanvas(num);
+    if (firstTimeRender) {
+      addANewCanvas(num);
     }
     // renderPageIntoCanvas()
     let canvas = document.getElementById(`the-canvas-${num}`);
@@ -53,28 +83,14 @@ function renderPage(num) {
           0,
           viewport.width,
           viewport.height,
-          '',
-          'FAST'
+          "",
+          "FAST"
         );
         resolve();
       });
     });
   });
 }
-
-const inputElement = document.getElementById("file");
-inputElement.addEventListener("change", handleFile, false);
-
-function handleFile() {
-  const fileList = this.files; /* now you can work with the file list */
-  console.log(fileList);
-  console.log("file name = ", fileList[0].name);
-  pdfFileName = fileList[0].name;
-  renderPages();
-  // enable Render Again button
-  document.getElementById("render-again").style.display = "block";
-}
-console.log("inputElement...", inputElement);
 
 const renderAgainButton = document.getElementById("render-again");
 renderAgainButton.addEventListener("click", handleRenderAgain, false);
@@ -84,9 +100,7 @@ function handleRenderAgain() {
   renderPages();
 }
 
-function renderPages() {
-  const path2pdf = `./src/doc/${pdfFileName}`;
-
+function getMasks() {
   const maskTop = document.getElementById("detail_mask_top");
   console.dir(maskTop);
   console.log("valueAsNumber", maskTop.valueAsNumber);
@@ -95,12 +109,30 @@ function renderPages() {
   const headerMask = document.getElementById("header_mask_height");
   console.log(headerMask);
   headerMaskHeight = headerMask.valueAsNumber;
+}
 
+function renderSaveButton() {
+  const button = document.createElement("button");
+  button.setAttribute("id", `save-button`);
+  button.innerHTML = "Save PDF Now";
+  document.body.appendChild(button);
+  button.addEventListener("click", handleSave, false);
+  function handleSave() {
+    newPdf.save(`${pdfFileName}`);
+  }
+}
+
+function renderPages() {
+  // const path2pdf = `./src/doc/${pdfFileName}`;
+  const path2pdf = fileDataURL;
+
+  getMasks();
   /**
    * Asynchronously downloads PDF.
    */
   // run()
   pdfjsLib.getDocument(path2pdf).promise.then(async doc => {
+    // pdfjsLib.getDocument(fullPathOfFileChosen).promise.then(async doc => {
     pdfDoc = doc;
     console.log("total number of pages = ", pdfDoc.numPages);
     for (let i = 1; i <= pdfDoc.numPages; i++) {
@@ -108,13 +140,6 @@ function renderPages() {
       i !== pdfDoc.numPages ? newPdf.addPage() : null;
     }
     firstTimeRender = false;
-    const button = document.createElement("button");
-    button.setAttribute("id", `save-button`);
-    button.innerHTML = "Save PDF Now";
-    document.body.appendChild(button);
-    button.addEventListener("click", handleSave, false);
-    function handleSave() {
-      newPdf.save(`${pdfFileName}`);
-    }
+    renderSaveButton();
   });
 }

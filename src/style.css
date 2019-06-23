@@ -55,8 +55,8 @@ input {
 }
 
 .inputfile {
-	width: 0.1px;
-	height: 0.1px;
+	/* width: 0.1px; */
+	/* height: 0.1px; */
 	opacity: 0;
 	overflow: hidden;
 	position: absolute;
@@ -64,15 +64,16 @@ input {
 }
 
 .inputfile + label {
-    font-size: 1.25em;
+    font-size: 2rem;
     font-weight: 200;
     color: white;
     background-color: black;
-    display: inline-block;
+    display: block;
     padding: 1rem;
     padding-left: 4rem;
     padding-right: 4rem;
     border-radius: 2rem;
+    text-align: center;
 }
 
 .inputfile:focus + label,
@@ -82,4 +83,10 @@ input {
 
 .inputfile + label {
 	cursor: pointer; /* "hand" cursor */
+}
+
+.input-container {
+    width: 100%;
+    margin: 0 auto;
+    margin-bottom: 4rem;
 }
